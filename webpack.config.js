@@ -1,5 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 
 module.exports = {
   entry: [
@@ -15,19 +17,20 @@ module.exports = {
     // only- means to only hot reload for successful updates
 
 
-    './index.js'
+    './index.jsx',
     // the entry point of our app
   ],
+  resolve: { extensions: ['.js', '.jsx'] },
   output: {
     filename: 'bundle.js',
     // the output bundle
 
     path: resolve(__dirname, 'dist'),
 
-    publicPath: '/'
+    publicPath: '/',
     // necessary for HMR to know where to load the hot update chunks
   },
-
+  performance: { hints: false },
   context: resolve(__dirname, 'src'),
 
   devtool: 'inline-source-map',
@@ -39,33 +42,27 @@ module.exports = {
     contentBase: resolve(__dirname, 'dist'),
     // match the output path
 
-    publicPath: '/'
+    publicPath: '/',
     // match the output `publicPath`
   },
 
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader?modules',
-          'postcss-loader',
-        ],
+        loader: ExtractTextPlugin.extract('css-loader'),
       },
     ],
   },
 
   plugins: [
+    new ExtractTextPlugin('bundle.css'),
     new webpack.HotModuleReplacementPlugin(),
-    // enable HMR globally
-
     new webpack.NamedModulesPlugin(),
-    // prints more readable module names in the browser console on HMR updates
   ],
 };
