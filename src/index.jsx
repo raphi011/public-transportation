@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import throttle from 'lodash/throttle';
+import runtime from 'serviceworker-webpack-plugin/lib/runtime';
 
 import App from './components/App';
 import configureStore from './configureStore';
 import { fetchStations } from './actions';
 import { saveState, loadState } from './localStorage';
+
+if (navigator.serviceWorker) {
+  const registration = runtime.register();
+}
 
 const state = loadState();
 const store = configureStore(state);
@@ -27,9 +32,6 @@ const render = (Component) => {
   );
 };
 
-if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/sw.js');
-}
 
 fetchStations()(store.dispatch);
 

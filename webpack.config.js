@@ -1,6 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 const host = 'localhost';
 const port = 8080;
@@ -22,24 +23,6 @@ module.exports = {
 
       './index.jsx',
       // the entry point of our app
-    ],
-    sw: './sw.js',
-    vendor: [
-      'react',
-      'react-dom',
-      'react-redux',
-      'redux',
-      'redux-logger',
-      'redux-thunk',
-      'isomorphic-fetch',
-      'lodash/throttle',
-      'grommet/components/App',
-      'grommet/components/Header',
-      'grommet/components/Box',
-      'grommet/components/Title',
-      'grommet/components/Columns',
-      'grommet/components/Select',
-      'grommet/components/Heading',
     ],
   },
   output: {
@@ -86,8 +69,8 @@ module.exports = {
     new ExtractTextPlugin('main.css'),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest'],
+    new ServiceWorkerWebpackPlugin({
+      entry: resolve(__dirname, 'src/sw.js')
     }),
   ],
 };

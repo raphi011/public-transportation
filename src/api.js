@@ -23,12 +23,9 @@ export function getSchedule(from, to) {
     { key: 'train_status', value: 'passenger' },
   ]);
 
-  console.log(url);
-
   return fetch(url)
     .then(response => response.json())
     .then((json) => {
-      console.log(json);
 
       return json.departures.all.map(s => ({
         departure: s.aimed_departure_time,
