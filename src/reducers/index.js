@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 
 import stations from './stations';
-import schedules from './schedules';
+import schedules, { getSchedule } from './schedules';
+
+export { getSchedule };
 
 export default combineReducers({
   stations,

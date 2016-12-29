@@ -1,34 +1,37 @@
 import { getStations } from '../api';
 import { fetchSchedule } from './schedule';
 
-const requestStations = () => ({
-  type: 'REQUEST_STATIONS',
-});
+const select = type => station => (dispatch, getState) => {
+  const { stations } = getState();
 
-const receiveStations = stations => ({
-  type: 'RECEIVE_STATIONS',
-  stations,
-});
+  dispatch({
+    type,
+    station,
+  });
 
-export const select = (type, station) => {
-  return (dispatch, getState) => {
-    const { stations } = getState();
+  if (!station) return;
 
-    dispatch({
-      type,
-      station,
-    });
-
-    if (stations.to && stations.from) {
-      fetchSchedule(stations.from.value, stations.to.value)(dispatch);
-    }
+  if (type === 'SELECT_TO' && stations.from) {
+    dispatch(fetchSchedule(stations.from.value, station.value));
+  } else if (type === 'SELECT_FROM' && stations.to) {
+    dispatch(fetchSchedule(station.value, stations.to.value));
   }
-}
+};
+
+export const selectTo = select('SELECT_TO');
+
+export const selectFrom = select('SELECT_FROM');
 
 export function fetchStations() {
   return (dispatch) => {
-    dispatch(requestStations());
+    dispatch({
+      type: 'REQUEST_STATIONS',
+    });
+
     return getStations()
-      .then(stations => dispatch(receiveStations(stations)));
+      .then(stations => dispatch({
+        type: 'RECEIVE_STATIONS',
+        stations,
+      }));
   };
 }

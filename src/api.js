@@ -23,6 +23,8 @@ export function getSchedule(from, to) {
     { key: 'train_status', value: 'passenger' },
   ]);
 
+  console.log(url);
+
   return fetch(url)
     .then(response => response.json())
     .then((json) => {

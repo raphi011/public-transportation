@@ -9,19 +9,16 @@ import Columns from 'grommet/components/Columns';
 import Select from 'grommet/components/Select';
 import Heading from 'grommet/components/Heading';
 import { connect } from 'react-redux';
-import Table from 'grommet/components/Table';
-import TableRow from 'grommet/components/TableRow';
 
-
-
+import Schedule from './Schedule';
 import * as actions from '../actions';
 
-const App = ({ stations, select, schedules }) => {
-  const selectTo = ({ option }) => (
-    select('SELECT_TO', option)
+const App = ({ stations, selectTo, selectFrom }) => {
+  const onSelectTo = ({ option }) => (
+    selectTo(option)
   );
-  const selectFrom = ({ option }) => (
-    select('SELECT_FROM', option)
+  const onSelectFrom = ({ option }) => (
+    selectFrom(option)
   );
 
   return (
@@ -29,7 +26,7 @@ const App = ({ stations, select, schedules }) => {
       <Header pad="small" colorIndex="brand">
         <Title>Public Transportation</Title>
       </Header>
-      <Box pad="small">
+      <Box pad="small" >
         <Columns maxCount={2} justify="between">
           <Box align="center">
             <div>
@@ -40,7 +37,7 @@ const App = ({ stations, select, schedules }) => {
                 placeHolder="Search"
                 options={stations.list}
                 value={stations.from}
-                onChange={selectFrom}
+                onChange={onSelectFrom}
                 />
             </div>
           </Box>
@@ -53,42 +50,30 @@ const App = ({ stations, select, schedules }) => {
                 placeHolder="Search"
                 options={stations.list}
                 value={stations.to}
-                onChange={selectTo}
+                onChange={onSelectTo}
                 />
             </div>
           </Box>
         </Columns>
       </Box>
-      <Table>
-        <thead>
-          <tr>
-            <th>Departure</th>
-            <th>Arrival</th>
-          </tr>
-        </thead>
-        <tbody>{schedules ? schedules.map((s, i) => (
-          <TableRow key={i}>
-            <td>
-              {s.departure}
-            </td>
-            <td>
-              {s.arrival}
-            </td>
-          </TableRow>
-        )) : ''}</tbody>
-      </Table>
+      <Box align="center" pad="medium">
+        <Schedule />
+      </Box>
     </Container>
   );
 };
 
 App.propTypes = {
-  schedules: PropTypes.array,
   stations: PropTypes.object,
-  select: PropTypes.func.isRequired,
+  selectTo: PropTypes.func.isRequired,
+  selectFrom: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({ stations: state.stations, schedules: state.schedules });
+const mapStateToProps = state => ({ stations: state.stations });
 
 export default connect(
   mapStateToProps,
-  { select: actions.select })(App);
+  {
+    selectTo: actions.selectTo,
+    selectFrom: actions.selectFrom,
+  })(App);

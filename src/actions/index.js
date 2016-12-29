@@ -1,4 +1,4 @@
-import { fetchStations, select } from './stations';
+import { fetchStations, selectTo, selectFrom } from './stations';
 import { fetchSchedule } from './schedule';
 
-export { fetchStations, select, fetchSchedule };
+export { fetchStations, selectTo, selectFrom, fetchSchedule };
