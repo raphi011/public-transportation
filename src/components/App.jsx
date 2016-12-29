@@ -9,15 +9,19 @@ import Columns from 'grommet/components/Columns';
 import Select from 'grommet/components/Select';
 import Heading from 'grommet/components/Heading';
 import { connect } from 'react-redux';
+import Table from 'grommet/components/Table';
+import TableRow from 'grommet/components/TableRow';
+
+
 
 import * as actions from '../actions';
 
-const App = ({ stations, onSelectTo, onSelectFrom }) => {
+const App = ({ stations, select, schedules }) => {
   const selectTo = ({ option }) => (
-    onSelectTo(option)
+    select('SELECT_TO', option)
   );
   const selectFrom = ({ option }) => (
-    onSelectFrom(option)
+    select('SELECT_FROM', option)
   );
 
   return (
@@ -31,7 +35,7 @@ const App = ({ stations, onSelectTo, onSelectFrom }) => {
             <div>
               <Heading tag="h2">
                 From
-          </Heading>
+              </Heading>
               <Select
                 placeHolder="Search"
                 options={stations.list}
@@ -43,8 +47,8 @@ const App = ({ stations, onSelectTo, onSelectFrom }) => {
           <Box align="center">
             <div>
               <Heading tag="h2">
-                Arrival
-          </Heading>
+                To
+              </Heading>
               <Select
                 placeHolder="Search"
                 options={stations.list}
@@ -55,21 +59,36 @@ const App = ({ stations, onSelectTo, onSelectFrom }) => {
           </Box>
         </Columns>
       </Box>
+      <Table>
+        <thead>
+          <tr>
+            <th>Departure</th>
+            <th>Arrival</th>
+          </tr>
+        </thead>
+        <tbody>{schedules ? schedules.map((s, i) => (
+          <TableRow key={i}>
+            <td>
+              {s.departure}
+            </td>
+            <td>
+              {s.arrival}
+            </td>
+          </TableRow>
+        )) : ''}</tbody>
+      </Table>
     </Container>
   );
 };
 
 App.propTypes = {
+  schedules: PropTypes.array,
   stations: PropTypes.object,
-  onSelectFrom: PropTypes.func.isRequired,
-  onSelectTo: PropTypes.func.isRequired,
+  select: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({ stations: state.stations });
+const mapStateToProps = state => ({ stations: state.stations, schedules: state.schedules });
 
 export default connect(
   mapStateToProps,
-  {
-    onSelectFrom: actions.selectFrom,
-    onSelectTo: actions.selectTo,
-  })(App);
+  { select: actions.select })(App);
