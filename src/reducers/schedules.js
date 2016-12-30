@@ -1,22 +1,37 @@
 const getKey = (from, to) => `${from}-${to}`;
 
 const schedules = (state = {}, action) => {
+  if (!action.to || !action.from) return state;
+
+  const key = getKey(action.from, action.to);
+
   switch (action.type) {
     case 'REQUEST_SCHEDULE':
-      const key = getKey(action.from, action.to);
       return {
         ...state,
         [key]: {
+          list: [],
+          ...state[key],
           isFetching: true,
-          list: [state.key].list || [],
+          error: null,
+        },
+      };
+    case 'ERROR_SCHEDULE':
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          isFetching: false,
+          error: action.error,
         },
       };
     case 'RECEIVE_SCHEDULE':
       return {
         ...state,
-        [getKey(action.from, action.to)]: {
+        [key]: {
           isFetching: false,
           list: action.schedule,
+          error: null,
         },
       };
     default:

@@ -7,7 +7,7 @@ const apiUrl = 'https://transportapi.com/v3/uk/train/';
 const buildUrl = (config, resourceUrl, params) => {
   const url = `${apiUrl}${resourceUrl}?app_id=${config.app_id}&app_key=${config.app_key}`;
 
-  const paramUrl = params.reduce((a, b) => a + `&${b.key}=${b.value}`, '');
+  const paramUrl = params.reduce((a, b) => `${a}&${b.key}=${b.value}`, '');
 
   return url + paramUrl;
 };
@@ -25,13 +25,10 @@ export function getSchedule(from, to) {
 
   return fetch(url)
     .then(response => response.json())
-    .then((json) => {
-
-      return json.departures.all.map(s => ({
-        departure: s.aimed_departure_time,
-        arrival: s.aimed_arrival_time,
-      }));
-    });
+    .then(json => json.departures.all.map(s => ({
+      departure: s.aimed_departure_time,
+      arrival: s.aimed_arrival_time,
+    })));
 }
 
 export function getStations() {
